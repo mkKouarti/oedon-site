@@ -1,0 +1,23 @@
+# oedon.dev
+
+> Structured data, maintained and delivered.
+
+## Capabilities
+
+- scrape: web scraping and data extraction
+  - scrape/SKILL.md
+- ingest: data ingestion, deduplication, and content-addressed identity
+  - ingest/SKILL.md
+- dataset: automated dataset building and validation
+  - dataset/SKILL.md
+
+## API
+
+Base: https://oedon.dev/api
+Protocol: x402
+Settlement: USDC
+Auth: payment-native (no API keys)
+
+## Contact
+
+Email: kamil@oedon.dev
