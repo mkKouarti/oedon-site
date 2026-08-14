@@ -1,39 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Oedon</title>
-  <meta name="description" content="Structured data, maintained and delivered.">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --fg: #1a1a1a; --bg: #fafafa; --muted: #666; --accent: #2d2d2d; }
-    @media (prefers-color-scheme: dark) {
-      :root { --fg: #e8e8e8; --bg: #111; --muted: #999; --accent: #ccc; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>oedon.dev</title>
+    <meta name="description" content="Structured data, maintained and delivered.">
+    <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <style>
+        @font-face {
+            font-family: 'Space Grotesk';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url(assets/fonts/space-grotesk-latin.woff2) format('woff2');
+        }
+        @font-face {
+            font-family: 'Space Mono';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(assets/fonts/space-mono-regular.woff2) format('woff2');
+        }
+        @font-face {
+            font-family: 'Space Mono';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(assets/fonts/space-mono-bold.woff2) format('woff2');
+        }
+
+        :root {
+            --bg: #ffffff;
+            --fg: #0a0a0a;
+            --muted: #737373;
+            --border: #e5e5e5;
+            --accent: #0a0a0a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Space Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--fg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        nav {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        nav a {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+        nav a:hover {
+            color: var(--fg);
+            background: #f5f5f5;
+        }
+        .nav-cta {
+            background: var(--fg);
+            color: #fff !important;
+            font-weight: 700;
+        }
+        .nav-cta:hover {
+            background: #333;
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 64px 24px 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        @media (min-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr 420px;
+                padding-top: 80px;
+            }
+        }
+        .hero-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+        }
+        .hero-text p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--muted);
+            max-width: 440px;
+        }
+        .hero-text .cta-row {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--fg);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #333;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--fg);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--fg);
+        }
+
+        .stage {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stage canvas {
+            display: block;
+            touch-action: none;
+        }
+        .stage-label {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--fg);
+            border-radius: 50%;
+            position: relative;
+        }
+        .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: var(--fg);
+            opacity: 0.3;
+            animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite;
+        }
+        @keyframes ping {
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        section {
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+        }
+        .section-header {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(28px, 3.5vw, 42px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        section p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--muted);
+            max-width: 560px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            background: #fff;
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: var(--fg);
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        footer span {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        footer a {
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: color 0.15s;
+        }
+        footer a:hover { color: var(--fg); }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "./assets/js/three.module.js"
+        }
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: var(--fg); background: var(--bg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 2rem;
-    }
-    main { max-width: 480px; text-align: center; }
-    h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
-    p { color: var(--muted); font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.5rem; }
-    a { color: var(--fg); }
-    footer { position: fixed; bottom: 1.5rem; color: var(--muted); font-size: 0.8rem; }
-    footer a { color: var(--muted); margin: 0 0.5rem; }
-  </style>
+    </script>
 </head>
 <body>
-  <main>
-    <h1>Oedon</h1>
-    <p>Structured data, maintained and delivered.</p>
-    <p><a href="mailto:kamil@oedon.dev">kamil@oedon.dev</a></p>
-  </main>
-  <footer>
-    <a href="privacy.html">Privacy</a>
-    <a href="terms.html">Terms</a>
-  </footer>
+    <header>
+        <a href="/" class="logo">
+            <img src="assets/img/oedon_logo.png" alt="Oedon" class="logo-icon">
+            oedon.dev
+        </a>
+        <nav>
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#contact" class="nav-cta">Contact</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <div class="hero-text">
+            <h1 class="fade-up">Building the<br>invisible web.</h1>
+            <p class="fade-up" style="transition-delay:80ms">
+                Software studio focused on APIs, automation, and the thin layer between data and design. We turn complex systems into simple interfaces.
+            </p>
+            <div class="cta-row fade-up" style="transition-delay:150ms">
+                <a href="#contact" class="btn btn-primary">Start a project &rarr;</a>
+                <a href="#work" class="btn btn-secondary">See selected work</a>
+            </div>
+        </div>
+
+        <div class="stage fade-up" style="transition-delay:120ms" id="stage">
+            <canvas id="cubeCanvas"></canvas>
+            <div class="stage-label">
+                <span class="pulse-dot"></span>
+                <span>2&times;2&times;2 &middot; live render</span>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section id="work">
+            <div class="fade-up">
+                <div class="section-header">&#10022; Selected Work</div>
+                <h2>Systems that stay alive.</h2>
+                <p>Every project is built to run without babysitting. APIs that heal themselves, scrapers that adapt, and interfaces that stay fast at any scale.</p>
+            </div>
+            <div class="cards">
+                <div class="card fade-up">
+                    <h3>Data Pipelines</h3>
+                    <p>Extract, transform, and load from any source. Structured JSON out of unstructured web pages, with zero browser overhead.</p>
+                </div>
+                <div class="card fade-up" style="transition-delay:60ms">
+                    <h3>API Design</h3>
+                    <p>Typed REST and MCP servers built for AI agents. Clean contracts, fast responses, and documentation that writes itself.</p>
+                </div>
+                <div class="card fade-up" style="transition-delay:120ms">
+                    <h3>Automation</h3>
+                    <p>Replace manual workflows with reliable scripts. Booking, monitoring, form submission &mdash; all behind a single endpoint.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="fade-up">
+                <div class="section-header">&#10022; About</div>
+                <h2>Small team,<br>sharp tools.</h2>
+                <p>We believe the best software is invisible. It works when you need it, stays out of the way when you don't, and never asks you to think about infrastructure.</p>
+            </div>
+        </section>
+
+        <section id="contact" style="padding-bottom: 40px;">
+            <div class="fade-up">
+                <div class="section-header">&#10022; Contact</div>
+                <h2>Let's build something.</h2>
+                <p style="margin-bottom: 24px;">Have a project in mind? Send a note. We read everything and reply within 48 hours.</p>
+                <a href="mailto:kamil@oedon.dev" class="btn btn-primary">kamil@oedon.dev</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>&copy; 2026 oedon.dev</span>
+        <div style="display:flex;gap:20px;">
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+        </div>
+    </footer>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('cubeCanvas');
+        const stage = document.getElementById('stage');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        camera.position.set(3.5, 2.5, 5);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        function resize() {
+            const w = stage.clientWidth;
+            const h = stage.clientHeight;
+            renderer.setSize(w, h);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const cubeGroup = new THREE.Group();
+        scene.add(cubeGroup);
+
+        const subSize = 0.94;
+        const spacing = 1.0;
+        const offset = spacing / 2;
+
+        const positions = [
+            [-offset, -offset, -offset], [offset, -offset, -offset],
+            [-offset,  offset, -offset], [offset,  offset, -offset],
+            [-offset, -offset,  offset], [offset, -offset,  offset],
+            [-offset,  offset,  offset], [offset,  offset,  offset],
+        ];
+
+        const faceMat = new THREE.MeshBasicMaterial({
+            color: 0x1a1d21,
+            side: THREE.DoubleSide
+        });
+
+        const edgeMat = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        positions.forEach(([x, y, z]) => {
+            const geo = new THREE.BoxGeometry(subSize, subSize, subSize);
+            const mesh = new THREE.Mesh(geo, faceMat);
+            mesh.position.set(x, y, z);
+            cubeGroup.add(mesh);
+
+            const edges = new THREE.EdgesGeometry(geo);
+            const line = new THREE.LineSegments(edges, edgeMat);
+            mesh.add(line);
+
+            const cornerGeo = new THREE.BufferGeometry();
+            const s = subSize / 2;
+            const verts = new Float32Array([
+                -s,-s,-s,  s,-s,-s,  s,s,-s,  -s,s,-s,
+                -s,-s,s,   s,-s,s,   s,s,s,   -s,s,s
+            ]);
+            cornerGeo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+            const cornerMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.06, sizeAttenuation: true });
+            const dots = new THREE.Points(cornerGeo, cornerMat);
+            mesh.add(dots);
+        });
+
+        const shadowGeo = new THREE.PlaneGeometry(2.8, 2.8);
+        const shadowMat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.06
+        });
+        const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+        shadow.rotation.x = -Math.PI / 2;
+        shadow.position.y = -2.0;
+        scene.add(shadow);
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            cubeGroup.position.y = Math.sin(t * 1.4) * 0.25;
+
+            cubeGroup.rotation.y = t * 0.55;
+            cubeGroup.rotation.x = Math.sin(t * 0.35) * 0.1;
+            cubeGroup.rotation.z = Math.cos(t * 0.22) * 0.04;
+
+            const h = cubeGroup.position.y;
+            const sc = 1 - (h + 0.25) * 0.12;
+            shadow.scale.setScalar(Math.max(0.65, sc));
+            shadow.material.opacity = Math.max(0.02, 0.08 - (h + 0.25) * 0.1);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        setTimeout(() => {
+            document.querySelectorAll('.hero .fade-up').forEach(el => el.classList.add('visible'));
+        }, 100);
+    </script>
 </body>
 </html>
