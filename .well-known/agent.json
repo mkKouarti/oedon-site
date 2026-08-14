@@ -1,0 +1,27 @@
+{
+  "name": "Oedon",
+  "description": "Structured data, maintained and delivered.",
+  "url": "https://oedon.dev",
+  "api": {
+    "base": "https://oedon.dev/api",
+    "protocol": "x402",
+    "settlement": "USDC",
+    "auth": "payment-native"
+  },
+  "capabilities": [
+    {
+      "name": "scrape",
+      "description": "Web scraping and data extraction"
+    },
+    {
+      "name": "ingest",
+      "description": "Data ingestion, deduplication, and content-addressed identity"
+    },
+    {
+      "name": "dataset",
+      "description": "Automated dataset building and validation"
+    }
+  ],
+  "contact": "kamil@oedon.dev",
+  "llms_txt": "https://oedon.dev/llms.txt"
+}
